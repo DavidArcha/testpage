@@ -1,0 +1,30 @@
+<div class="capture-container">
+    <!-- Webcam Viewer -->
+    <div class="webcam-container">
+      <webcam
+        [trigger]="triggerObservable"
+        [videoOptions]="{ deviceId: selectedDevice ? { exact: selectedDevice } : undefined }"
+        (imageCapture)="handleImage($event)"
+      ></webcam>
+    </div>
+  
+    <!-- Control Buttons -->
+    <div class="controls">
+      <button (click)="triggerSnapshot()">Capture</button>
+    </div>
+  
+    <!-- Captured Image Preview -->
+    <div class="image-preview" *ngIf="capturedImages.length > 0">
+      <h3>Captured Images</h3>
+      <div class="images-container">
+        <div
+          class="image-item"
+          *ngFor="let image of capturedImages; let i = index"
+        >
+          <img [src]="image" alt="Captured Image" />
+          <button class="delete-btn" (click)="deleteImage(i)">&#10006;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

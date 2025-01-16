@@ -203,5 +203,4 @@ deleteImage(index: number) {
     }
     this.videoElement.nativeElement.srcObject = null;
   }
-  
 }
