@@ -1,0 +1,50 @@
+<div class="capture-container">
+  <!-- Video Element for Live Camera Feed -->
+  <div class="video-container" *ngIf="isCameraActive">
+    <video #video autoplay></video>
+  </div>
+
+  <div class="canvas-container" *ngIf="isCameraActive">
+    <canvas #canvas></canvas>
+  </div>
+
+  <!-- Control Buttons -->
+  <div class="controls">
+    <button (click)="startCamera()" *ngIf="!isCameraActive">Start Camera</button>
+    <button (click)="captureImage()" [disabled]="!isVideoLoaded" *ngIf="isCameraActive">Capture</button>
+    <button (click)="stopCamera()" *ngIf="isCameraActive">Stop Camera</button>    
+    <button (click)="submitImages()" [disabled]="capturedImages.length === 0">Submit</button>
+  </div>
+
+  <!-- Large Preview Area with Zoom Controls -->
+  <div class="large-preview" *ngIf="selectedImage">
+    <img [src]="selectedImage" alt="Selected Image" style="width: 100%; height: auto;" />
+  </div>
+
+  <!-- Image List -->
+  <div class="image-preview">
+    <div class="arrow" *ngIf="capturedImages.length > maxVisibleImages" (click)="navigateImages('back')">
+      <button>&lt;</button>
+    </div>
+
+    <div class="image-list">
+      <div *ngFor="let image of visibleImages; let i = index" class="image-item">
+        <img
+          [src]="image.data"
+          alt="Captured Image"
+          (click)="selectImage(currentStartIndex + i)"
+        />
+        <button class="delete-btn" (click)="deleteImage(i)">&#10006;</button>
+      </div>
+    </div>
+
+    <div class="arrow" *ngIf="capturedImages.length > maxVisibleImages" (click)="navigateImages('forward')">
+      <button>&gt;</button>
+    </div>
+  </div>
+
+  <!-- Image Count -->
+  <div class="image-count">
+    <p>Number of Images: {{ capturedImages.length }}</p>
+  </div>
+</div>
