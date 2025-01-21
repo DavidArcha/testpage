@@ -12,12 +12,7 @@
   <div class="controls">
     <button (click)="triggerSnapshot()">Capture</button>
     <button (click)="stopCamera()">Stop Camera</button>
-    <button 
-      (click)="submitImages()" 
-      [disabled]="capturedImages.length === 0"
-    >
-      Submit
-    </button>
+    <!-- <button (click)="submitImages()" [disabled]="capturedImages.length === 0">Submit</button> -->
   </div>
 
   <!-- Captured Image Preview -->
@@ -65,4 +60,6 @@
       <p>Total Captured Images: <strong>{{ capturedImages.length }}</strong></p>
     </div>
   </div>
+  
+    
 </div>

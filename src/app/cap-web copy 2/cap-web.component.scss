@@ -5,14 +5,24 @@
   gap: 20px;
 }
 
-// .webcam-container {
-//   .webcam-wrapper {
-//     video.mirrored {
-//       width: 500px !important;
-//       height: 400px !important;
-//     }
-//   }
-// }
+.webcam-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px; /* Optional: Adjust this for your layout */
+  aspect-ratio: 4 / 3; /* Maintain camera's aspect ratio */
+  overflow: hidden;
+  border: 2px solid #007bff;
+  border-radius: 10px;
+
+   /* Target the video element inside the webcam component */
+   .webcam-wrapper {
+    video {
+      max-width: 500px;
+      max-height: 480px;
+      object-fit: cover; /* Ensures the video fills the container without distortion */
+    }
+  }
+}
 
 .controls {
   display: flex;
@@ -146,10 +156,4 @@
     font-weight: bold;
     color: #007bff;
   }
-}
-
-::ng-deep .webcam-wrapper video.mirrored {
-  width: 300px;
-  height: 300px;
-  aspect-ratio: auto 300 / 300;
 }

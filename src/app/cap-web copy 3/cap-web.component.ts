@@ -1,11 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { WebcamImage, WebcamUtil } from 'ngx-webcam';
 
@@ -19,7 +12,7 @@ interface CapturedImage {
 @Component({
   selector: 'app-cap-web',
   templateUrl: './cap-web.component.html',
-  styleUrl: './cap-web.component.scss',
+  styleUrl: './cap-web.component.scss'
 })
 export class CapWebComponent implements AfterViewInit {
   private trigger: Subject<void> = new Subject<void>();
@@ -31,7 +24,6 @@ export class CapWebComponent implements AfterViewInit {
   public showRightIcon = false;
 
   @Output() stopCameraEvent = new EventEmitter<void>(); // Notify parent when camera stops
-  @Output() submitImagesEvent = new EventEmitter<any[]>(); // Emit capturedImages on submit
 
   @ViewChild('imagesContainer') imagesContainer!: ElementRef;
 
@@ -67,21 +59,19 @@ export class CapWebComponent implements AfterViewInit {
     const type = blob.type;
 
     // Add timestamp to the captured image
-    const overlayedImage = await this.addTimestampToImage(
-      webcamImage.imageAsDataUrl
-    );
+    const overlayedImage = await this.addTimestampToImage(webcamImage.imageAsDataUrl);
 
     this.capturedImages.push({
       name: imageName,
       size: size,
       type: type,
-      dataUrl: webcamImage.imageAsDataUrl,
+      dataUrl: overlayedImage
     });
 
     console.log('Captured image with timestamp added:', {
       name: imageName,
       size: size,
-      type: type,
+      type: type
     });
 
     setTimeout(() => {
@@ -127,8 +117,7 @@ export class CapWebComponent implements AfterViewInit {
   public updateScrollIcons(): void {
     const container = this.imagesContainer.nativeElement;
     this.showLeftIcon = container.scrollLeft > 0;
-    this.showRightIcon =
-      container.scrollLeft + container.clientWidth < container.scrollWidth;
+    this.showRightIcon = container.scrollLeft + container.clientWidth < container.scrollWidth;
   }
 
   public onScroll(): void {
@@ -182,7 +171,11 @@ export class CapWebComponent implements AfterViewInit {
 
   // New Submit Method
   public submitImages(): void {
-    console.log('Submitting images:', this.capturedImages);
-    this.submitImagesEvent.emit(this.capturedImages); // Emit capturedImages array to the parent
+    if (this.capturedImages.length > 0) {
+      console.log('Submitting captured images:', this.capturedImages);
+      alert('Images submitted successfully!');
+    } else {
+      console.error('No images to submit.');
+    }
   }
 }

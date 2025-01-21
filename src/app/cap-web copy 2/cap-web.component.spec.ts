@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CaptureImgComponent } from './capture-img.component';
+import { CapWebComponent } from './cap-web.component';
 
-describe('CaptureImgComponent', () => {
-  let component: CaptureImgComponent;
-  let fixture: ComponentFixture<CaptureImgComponent>;
+describe('CapWebComponent', () => {
+  let component: CapWebComponent;
+  let fixture: ComponentFixture<CapWebComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CaptureImgComponent]
+      declarations: [CapWebComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CaptureImgComponent);
+    fixture = TestBed.createComponent(CapWebComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

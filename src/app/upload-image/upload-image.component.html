@@ -1,0 +1,17 @@
+<div class="upload-image-container">
+  <!-- Capture Image Button -->
+  <button *ngIf="!showCapWebComponent" (click)="captureImage()">Capture Image</button>
+
+  <!-- CapWebComponent -->
+  <app-cap-web *ngIf="showCapWebComponent" (stopCameraEvent)="handleStopCamera()"
+    (submitImagesEvent)="storeCapturedImages($event)"></app-cap-web>
+
+  <!-- Display Stored Images -->
+  <div class="stored-images" *ngIf="storedImages.length > 0">
+    <h3>Stored Images</h3>
+    <div *ngFor="let image of storedImages">
+      <img [src]="image.dataUrl" [alt]="image.name" />
+      <p>{{ image.name }}</p>
+    </div>
+  </div>
+</div>
