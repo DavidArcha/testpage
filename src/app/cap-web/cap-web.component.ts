@@ -41,10 +41,12 @@ export class CapWebComponent implements AfterViewInit {
     this.availableDevices = devices;
 
     // Prefer back camera if available
-    const backCamera = devices.find((device) =>
-      device.label.toLowerCase().includes('back')
-    );
-    this.selectedDevice = backCamera ? backCamera.deviceId : devices[0]?.deviceId;
+    navigator.mediaDevices.enumerateDevices().then((mediaDevices) => {
+      const videoDevices = mediaDevices.filter((device) => device.kind === 'videoinput');
+      const backCamera = videoDevices.find((device) => device.label.toLowerCase().includes('back')) 
+                        || videoDevices[0]; // Fallback to the first camera
+      this.selectedDevice = backCamera ? backCamera.deviceId : '';
+    });
   });
   }
 
