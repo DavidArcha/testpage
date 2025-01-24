@@ -1,0 +1,93 @@
+<div class="wrapper">
+    <!-- Drag-and-drop area enhancement -->
+    <div class="drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event)" *ngIf="selectedImages.length === 0">
+        Drag and drop images here or click "Select Image"
+    </div>
+
+    <div class="buttons-container">
+        <!-- Initially display only "Select Image" button, hide others based on selectedImages -->
+        <button (click)="fileInput.click()" class="select-image" *ngIf="selectedImages.length === 0">Select
+            Image</button>
+        <button *ngIf="!showCapWebComponent" (click)="captureImage()">Capture Image</button>
+
+        <!-- Show "Add More", "Upload", and "Cancel" when images are selected -->
+
+        <button (click)="onAddMoreImages()" class="add-more" *ngIf="selectedImages.length > 0"
+            [disabled]="isUploading">Add More</button>
+        <button (click)="onUploadImages()" class="upload" *ngIf="selectedImages.length > 0"
+            [disabled]="isUploading || hasOversizedFiles()">Upload</button>
+        <button (click)="onCancelUpload()" class="cancel" *ngIf="selectedImages.length > 0">Cancel</button>
+
+        <input #fileInput type="file" multiple accept=".png, .jpeg" (change)="onSelectImage($event)"
+            style="display:none;">
+    </div>
+
+    <app-cap-web *ngIf="showCapWebComponent" (stopCameraEvent)="handleStopCamera()"
+        (submitImagesEvent)="storeCapturedImages($event)"></app-cap-web>
+
+
+    <!-- Image list and additional enhancements -->
+    <div *ngIf="selectedImages.length > 0" class="images-list">
+        <div *ngFor="let image of selectedImages; let i = index;" class="image-item">
+            <div class="image-info"
+                [ngClass]="{'oversized': image.oversized, 'infected': uploadStatus[i] === 'infected'}">
+                <span class="image-name">{{ image.name }} ({{ (image.size / 1024).toFixed(2) }} KB)</span>
+                <span *ngIf="image.oversized" class="image-size warning">Image exceeds 5MB</span>
+                <span *ngIf="uploadStatus[i] === 'infected'" class="size-warning"> - {{ image.errorMessage }}</span>
+                <span *ngIf="uploadStatus[i] === 'error'" class="error-icon">❌</span>
+                <span *ngIf="uploadStatus[i] === 'success'" class="success-icon">✔️</span>
+            </div>
+            <span class="delete-icon" (click)="removeImage(i)" [class.disabled]="isUploading">X</span>
+        </div>
+    </div>
+
+    <!-- Failed Images List -->
+    <div *ngIf="failedImages.length > 0" class="failed-images-list">
+        <h3>Failed Images</h3>
+        <div *ngFor="let image of failedImages; let i = index;" class="image-item">
+            <div class="image-info">
+                <span class="image-name">{{ image.name }} ({{ (image.size / 1024).toFixed(2) }} KB)</span>
+                <span class="error-message">{{ image.errorMessage }}</span>
+            </div>
+            <span class="delete-icon" (click)="removeFailedImage(i)">X</span>
+        </div>
+    </div>
+
+    <div *ngIf="selectedImages.length > 0" class="total-size">
+        Total Selected Files: {{ selectedImages.length }}.
+        Total Size: {{ (totalSize / (1024 * 1024)).toFixed(2) }} MB / 50 MB
+    </div>
+
+    <div *ngIf="isUploading" class="upload-progress">
+        <span class="loading-ring">⏳</span>
+        <span class="progress-text">{{ uploadProgress }}</span>
+    </div>
+
+    <div *ngIf="!isUploading && uploadProgress === 'Upload complete!'" class="upload-completion">
+        Upload complete!
+    </div>
+
+    <!-- Upload Summary -->
+    <div *ngIf="uploadSummaryVisible" class="upload-summary">
+        <p>Total Selected Files: {{ selectedImages.length }}+{{failedImages.length}}.</p>
+        <p>Total Uploaded Files: {{ uploadedCount }}.</p>
+        <p>Upload Failed Files: {{ failedImages.length }}.</p>
+    </div>
+
+    <!-- Warning message for oversized files -->
+    <div *ngIf="hasOversizedFiles()" class="oversized-warning">
+        <span style="color: red;">One or more files exceed 5 MB. Please remove them to proceed with the upload.</span>
+    </div>
+
+    <!-- Display Stored Images -->
+    <div class="stored-images" *ngIf="storedImages.length > 0">
+        <h3>Stored Images</h3>
+        <div *ngFor="let image of storedImages">
+            <img [src]="image.dataUrl" [alt]="image.name" style="width: 150px;height: 150px;" />
+            <p>{{ image.name }}</p>
+        </div>
+    </div>
+    <div>
+        <app-image-slider></app-image-slider>
+    </div>
+</div>

@@ -1,0 +1,111 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+  }
+  
+  .buttons-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .images-list {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 20px;
+  }
+  
+  .image-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+  /* Enhancement: Drag-and-drop area styling */
+  .drop-area {
+    border: 2px dashed #ddd;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .drop-area:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* Enhancement: Image preview thumbnail */
+  .image-preview img {
+    max-width: 50px;
+    max-height: 50px;
+    margin-right: 10px;
+    border-radius: 4px;
+  }
+  
+  /* Total size and file count */
+  .total-size {
+    font-weight: bold;
+    margin-top: 15px;
+  }
+  
+  /* Enhancement: Progress bar */
+  .progress-bar {
+    width: 100%;
+    height: 5px;
+    background: #f3f3f3;
+    margin-top: 5px;
+    border-radius: 3px;
+  }
+  .progress {
+    height: 100%;
+    background: #4caf50;
+    border-radius: 3px;
+  }
+  
+  /* Enhancement: Success and error icons */
+  .success-icon {
+    color: green;
+    font-size: 1.2em;
+    margin-left: 5px;
+  }
+  .error-icon {
+    color: red;
+    font-size: 1.2em;
+    margin-left: 5px;
+  }
+  
+  /* Upload progress spinner */
+  .upload-progress .loading-ring {
+    margin-right: 5px;
+  }
+  
+  .upload-completion {
+    color: green;
+    font-weight: bold;
+  }
+  
+  /* Disable delete icon when uploading */
+  .delete-icon.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  
+  /* Styling for oversized and infected file names */
+  .oversized .image-name,
+  .infected .image-name {
+    color: red;
+  }
+  
+  .size-warning {
+    font-size: 0.9em;
+    color: red;
+    margin-left: 5px;
+  }
+  

@@ -1,0 +1,38 @@
+<!-- <div class="image-slider-container">
+    <button class="arrow left-arrow" (click)="prevImage()">
+        &lt;
+    </button>
+
+    <div class="image-display">
+        <img *ngIf="images.length > 0" [src]="'data:image/jpeg;base64,' + getCurrentImage()" alt="Slider Image"
+            class="slider-image" />
+        <p *ngIf="images.length === 0">No images available</p>
+    </div>
+
+    <button class="arrow right-arrow" (click)="nextImage()">
+        &gt;
+    </button>
+</div>
+
+<div class="image-counter">
+    <span>{{ currentImageIndex + 1 }}/{{ images.length }}</span>
+</div> -->
+
+<div class="image-slider">
+    <div class="slider-content">
+        <img *ngIf="images.length > 0" [src]="'data:image/jpeg;base64,' + getCurrentImage()" alt="Slider Image"
+            class="slider-image" />
+        <p *ngIf="images.length === 0">No images available</p>
+    </div>
+
+    <div class="slider-controls">
+        <button (click)="prevImage()">&#8249;</button>
+        <span>{{ currentImageIndex + 1 }}/{{ images.length }}</span>
+        <button (click)="nextImage()">&#8250;</button>
+    </div>
+    <div class="delete-controls">
+        <button class="delete-btn" (click)="deleteCurrentImage()">
+            <i class="fa fa-trash"></i> Delete
+        </button>
+    </div>
+</div>

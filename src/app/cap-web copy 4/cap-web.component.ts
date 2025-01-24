@@ -39,14 +39,7 @@ export class CapWebComponent implements AfterViewInit {
     // Initialize available devices
     WebcamUtil.getAvailableVideoInputs().then((devices) => {
       this.availableDevices = devices;
-      const backCamera = devices.find(
-        (device) =>
-          device.label.toLowerCase().includes('back') ||
-          device.label.toLowerCase().includes('rear')
-      );
-      if (backCamera) {
-        this.selectedDevice = backCamera.deviceId;
-      } else if (devices.length > 0) {
+      if (devices.length > 0) {
         this.selectedDevice = devices[0].deviceId;
       }
     });
@@ -82,7 +75,6 @@ export class CapWebComponent implements AfterViewInit {
       name: imageName,
       size: size,
       type: type,
-      imageData: blob,
       dataUrl: webcamImage.imageAsDataUrl,
     });
 

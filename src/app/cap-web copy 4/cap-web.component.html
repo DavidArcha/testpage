@@ -1,0 +1,68 @@
+<div class="capture-container">
+  <!-- Webcam Viewer -->
+  <div class="webcam-container">
+    <webcam
+      [trigger]="triggerObservable"
+      [videoOptions]="{ deviceId: selectedDevice ? { exact: selectedDevice } : undefined }"
+      (imageCapture)="handleImage($event)"
+    ></webcam>
+  </div>
+
+  <!-- Control Buttons -->
+  <div class="controls">
+    <button (click)="triggerSnapshot()">Capture</button>
+    <button (click)="stopCamera()">Stop Camera</button>
+    <button 
+      (click)="submitImages()" 
+      [disabled]="capturedImages.length === 0"
+    >
+      Submit
+    </button>
+  </div>
+
+  <!-- Captured Image Preview -->
+  <div class="image-preview">
+    <h3>Captured Images</h3>
+    <div class="scroll-container">
+      <!-- Backward Icon -->
+      <button
+        class="scroll-icon left"
+        *ngIf="showLeftIcon"
+        (click)="scrollImages('left')"
+      >
+        &#8249;
+      </button>
+  
+      <!-- Images Container -->
+      <div class="images-container" #imagesContainer (scroll)="onScroll()">
+        <div
+          class="image-item"
+          *ngFor="let image of capturedImages; let i = index"
+          (click)="openImageReview(image)"
+        >
+          <img [src]="image.dataUrl" alt="Captured Image" />
+          <button class="delete-btn" (click)="deleteImage(i); $event.stopPropagation()">&#10006;</button>
+        </div>
+      </div>
+  
+      <!-- Forward Icon -->
+      <button
+        class="scroll-icon right"
+        *ngIf="showRightIcon"
+        (click)="scrollImages('right')"
+      >
+        &#8250;
+      </button>
+    </div>
+  
+    <!-- Review Image Container -->
+    <div class="review-img" *ngIf="reviewImage">
+      <img [src]="reviewImage.dataUrl" alt="Reviewed Image" />
+    </div>
+  
+    <!-- Captured Images Count -->
+    <div class="image-count">
+      <p>Total Captured Images: <strong>{{ capturedImages.length }}</strong></p>
+    </div>
+  </div>
+</div>
