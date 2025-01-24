@@ -39,19 +39,16 @@ export class CapWebComponent implements AfterViewInit {
     // Initialize available devices
     WebcamUtil.getAvailableVideoInputs().then((devices) => {
       this.availableDevices = devices;
+
+      // Prefer back camera if available
       const backCamera = devices.find(
         (device) =>
           device.label.toLowerCase().includes('back') ||
-          device.label.toLowerCase().includes('rear')
+          device.kind === 'videoinput'
       );
-      if (backCamera) {
-        this.selectedDevice = backCamera.deviceId;
-      } else if (devices.length > 0) {
-        this.selectedDevice = devices[0].deviceId;
-      }
-
-      // Set video constraints
-      this.setVideoConstraints();
+      this.selectedDevice = backCamera
+        ? backCamera.deviceId
+        : devices[0].deviceId;
     });
   }
 
@@ -85,7 +82,6 @@ export class CapWebComponent implements AfterViewInit {
       name: imageName,
       size: size,
       type: type,
-      imageData: blob,
       dataUrl: webcamImage.imageAsDataUrl,
     });
 
@@ -148,23 +144,6 @@ export class CapWebComponent implements AfterViewInit {
 
   public openImageReview(image: CapturedImage): void {
     this.reviewImage = image;
-  }
-
-  // Method to set video constraints
-  private setVideoConstraints(): void {
-    const videoConstraints = this.selectedDevice
-      ? { deviceId: { exact: this.selectedDevice } } // Use deviceId if available
-      : { facingMode: { exact: 'environment' } }; // Fallback to facingMode for back camera
-
-    navigator.mediaDevices
-      .getUserMedia({ video: videoConstraints })
-      .then((stream) => {
-        console.log('Camera stream initialized', stream);
-        // Attach the stream to your video element or webcam component here
-      })
-      .catch((err) => {
-        console.error('Error accessing camera', err);
-      });
   }
 
   private dataUrlToBlob(dataUrl: string): Blob {
