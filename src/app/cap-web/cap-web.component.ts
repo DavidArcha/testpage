@@ -26,95 +26,98 @@ export class CapWebComponent implements AfterViewInit {
   public availableDevices: MediaDeviceInfo[] = [];
   public selectedDevice: string = '';
   public capturedImages: any[] = [];
-  public reviewImage: CapturedImage | null = null;
+  public reviewImage: any | null = null;
   public showLeftIcon = false;
   public showRightIcon = false;
 
-  @Output() stopCameraEvent = new EventEmitter<void>(); // Notify parent when camera stops
-  @Output() submitImagesEvent = new EventEmitter<any[]>(); // Emit capturedImages on submit
+  @Output() stopCameraEvent = new EventEmitter<void>();
+  @Output() submitImagesEvent = new EventEmitter<any[]>();
 
   @ViewChild('imagesContainer') imagesContainer!: ElementRef;
 
   constructor() {
-    // Initialize available devices
-    WebcamUtil.getAvailableVideoInputs().then((devices) => {
-      this.availableDevices = devices;
-      const backCamera = devices.find(
-        (device) =>
-          device.label.toLowerCase().includes('back') ||
-          device.label.toLowerCase().includes('rear')
-      );
-      if (backCamera) {
-        this.selectedDevice = backCamera.deviceId;
-      } else if (devices.length > 0) {
-        this.selectedDevice = devices[0].deviceId;
-      }
-
-      // Set video constraints
-      this.setVideoConstraints();
-    });
+    this.initializeCameraDevices();
   }
 
   ngAfterViewInit(): void {
-    this.updateScrollIcons(); // Initialize scroll icons
+    this.updateScrollIcons();
   }
 
-  // Trigger the webcam snapshot
+  private async initializeCameraDevices(): Promise<void> {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      this.availableDevices = devices.filter((device) => device.kind === 'videoinput');
+
+      const backCamera = this.availableDevices.find((device) =>
+        device.label.toLowerCase().includes('back') ||
+        device.label.toLowerCase().includes('rear')
+      );
+
+      if (backCamera) {
+        this.selectedDevice = backCamera.deviceId;
+      } else if (this.availableDevices.length > 0) {
+        this.selectedDevice = this.availableDevices[0].deviceId;
+      }
+
+      await this.setVideoConstraints();
+    } catch (error) {
+      console.error('Error initializing camera devices:', error);
+    }
+  }
+
+  private async setVideoConstraints(): Promise<void> {
+    const constraints = this.selectedDevice
+      ? { video: { deviceId: { exact: this.selectedDevice } } }
+      : { video: { facingMode: { ideal: 'environment' } } };
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('Camera stream initialized:', stream);
+      // Attach the stream to your video element if needed
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+    }
+  }
+
   public triggerSnapshot(): void {
     this.trigger.next();
   }
 
-  // Get trigger observable
   public get triggerObservable(): Observable<void> {
     return this.trigger.asObservable();
   }
 
-  // Handle image capture and add timestamp
   public async handleImage(webcamImage: WebcamImage): Promise<void> {
     const imageName = `image_${Date.now()}.png`;
     const blob = this.dataUrlToBlob(webcamImage.imageAsDataUrl);
     const size = blob.size;
     const type = blob.type;
 
-    // Add timestamp to the captured image
-    const overlayedImage = await this.addTimestampToImage(
-      webcamImage.imageAsDataUrl
-    );
+    const overlayedImage = await this.addTimestampToImage(webcamImage.imageAsDataUrl);
 
     this.capturedImages.push({
       name: imageName,
       size: size,
       type: type,
       imageData: blob,
-      dataUrl: webcamImage.imageAsDataUrl,
-    });
-
-    console.log('Captured image with timestamp added:', {
-      name: imageName,
-      size: size,
-      type: type,
+      dataUrl: overlayedImage,
     });
 
     setTimeout(() => {
-      this.scrollToLatestImage(); // Ensure latest image is visible
-      this.updateScrollIcons(); // Update scroll icons after adding an image
-    }, 50); // Slight delay to ensure DOM updates
+      this.scrollToLatestImage();
+      this.updateScrollIcons();
+    }, 50);
   }
 
-  // Stop the camera and emit event
   public stopCamera(): void {
-    console.log('Camera stopped');
     this.stopCameraEvent.emit();
   }
 
-  // Delete a captured image
   public deleteImage(index: number): void {
     this.capturedImages.splice(index, 1);
-    console.log(`Deleted image at index: ${index}`);
     this.updateScrollIcons();
   }
 
-  // Scroll the images container
   public scrollImages(direction: 'left' | 'right'): void {
     const scrollAmount = 150;
     const container = this.imagesContainer.nativeElement;
@@ -128,13 +131,11 @@ export class CapWebComponent implements AfterViewInit {
     this.updateScrollIcons();
   }
 
-  // Scroll to the latest image
   public scrollToLatestImage(): void {
     const container = this.imagesContainer.nativeElement;
     container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
   }
 
-  // Update visibility of scroll icons
   public updateScrollIcons(): void {
     const container = this.imagesContainer.nativeElement;
     this.showLeftIcon = container.scrollLeft > 0;
@@ -146,25 +147,8 @@ export class CapWebComponent implements AfterViewInit {
     this.updateScrollIcons();
   }
 
-  public openImageReview(image: CapturedImage): void {
+  public openImageReview(image: any): void {
     this.reviewImage = image;
-  }
-
-  // Method to set video constraints
-  private setVideoConstraints(): void {
-    const videoConstraints = this.selectedDevice
-      ? { deviceId: { exact: this.selectedDevice } } // Use deviceId if available
-      : { facingMode: { exact: 'environment' } }; // Fallback to facingMode for back camera
-
-    navigator.mediaDevices
-      .getUserMedia({ video: videoConstraints })
-      .then((stream) => {
-        console.log('Camera stream initialized', stream);
-        // Attach the stream to your video element or webcam component here
-      })
-      .catch((err) => {
-        console.error('Error accessing camera', err);
-      });
   }
 
   private dataUrlToBlob(dataUrl: string): Blob {
@@ -208,9 +192,7 @@ export class CapWebComponent implements AfterViewInit {
     });
   }
 
-  // New Submit Method
   public submitImages(): void {
-    console.log('Submitting images:', this.capturedImages);
-    this.submitImagesEvent.emit(this.capturedImages); // Emit capturedImages array to the parent
+    this.submitImagesEvent.emit(this.capturedImages);
   }
 }
