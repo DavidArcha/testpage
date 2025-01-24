@@ -36,20 +36,16 @@ export class CapWebComponent implements AfterViewInit {
   @ViewChild('imagesContainer') imagesContainer!: ElementRef;
 
   constructor() {
-    // Initialize available devices
-    WebcamUtil.getAvailableVideoInputs().then((devices) => {
-      this.availableDevices = devices;
+  // Initialize available devices
+  WebcamUtil.getAvailableVideoInputs().then((devices) => {
+    this.availableDevices = devices;
 
-      // Prefer back camera if available
-      const backCamera = devices.find(
-        (device) =>
-          device.label.toLowerCase().includes('back') ||
-          device.kind === 'videoinput'
-      );
-      this.selectedDevice = backCamera
-        ? backCamera.deviceId
-        : devices[0].deviceId;
-    });
+    // Prefer back camera if available
+    const backCamera = devices.find((device) =>
+      device.label.toLowerCase().includes('back')
+    );
+    this.selectedDevice = backCamera ? backCamera.deviceId : devices[0]?.deviceId;
+  });
   }
 
   ngAfterViewInit(): void {
